@@ -6,10 +6,11 @@ import {
     } from 'firebase/auth';
    
 const Auth = ()=> {
-    
+
     const [email, setEmail] = useState("");
     const [password,setPassword] = useState("");
-    const [newAccount,setNewAccount] = useState(false);
+    const [newAccount,setNewAccount] = useState(true);
+    const [error,setError] = useState("");
     const onChange = (event) => {
         const {target:{name,value}}=event;
         if(name==="email"){
@@ -31,12 +32,18 @@ const Auth = ()=> {
             alert('로그인되었습니다.');
         }
             console.log(data);
+           
+
         } catch (error) {
-            console.log(error);
+            setError(error.message);
         }
     };
+    const toggleAccount = () => setNewAccount((prev)=>!prev);
+
     return(
     <div>
+        {/*토글버튼*/}
+        <span onClick={toggleAccount} style={{cursor:"pointer",textDecoration:"underline"}}>{newAccount ? "Log in" : "Create Account"}</span><br/><br/>
         <form onSubmit={onSubmit}>
             <input 
                 name="email" 
@@ -45,6 +52,7 @@ const Auth = ()=> {
                 required 
                 value={email} 
                 onChange={onChange}/>
+            <br/>
             <input 
                 name="password" 
                 type="password" 
@@ -52,7 +60,9 @@ const Auth = ()=> {
                 required 
                 value={password} 
                 onChange={onChange}/>
+                <br/><span>{error}</span><br/>
             <input type="submit" value={newAccount?"Create Account":"Log In"} />
+            <br/><br/>
         </form>
         <div>
             <button>Continue with Google.</button>
