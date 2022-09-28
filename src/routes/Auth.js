@@ -3,21 +3,21 @@ import {
     createUserWithEmailAndPassword,
     getAuth,
     signInWithEmailAndPassword,
+    FacebookAuthProvider,
+    GoogleAuthProvider,
+    signInWithRedirect,
+    signInWithPopup
     } from 'firebase/auth';
-   
+    const provider = new GoogleAuthProvider(); 
 const Auth = ()=> {
 
     const [email, setEmail] = useState("");
     const [password,setPassword] = useState("");
-    const [newAccount,setNewAccount] = useState(true);
+    const [newAccount,setNewAccount] = useState(false);
     const [error,setError] = useState("");
     const onChange = (event) => {
         const {target:{name,value}}=event;
-        if(name==="email"){
-            setEmail(value)
-        }else if(name==="password"){
-            setPassword(value)
-        }
+       
     }
     const onSubmit = async (e) => {
     e.preventDefault();
@@ -39,6 +39,40 @@ const Auth = ()=> {
         }
     };
     const toggleAccount = () => setNewAccount((prev)=>!prev);
+    //sns Log-in
+    const onSocialClick = (e) => {
+        console.log(e.target.name);
+        const {target:{name}} = e;
+       
+        if(name==="google"){
+            
+            provider.setCustomParameters({
+                'display': 'popup'
+              });
+
+            const auth = getAuth();
+            signInWithPopup(auth, provider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+                // ...
+            }).catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+            });
+        }else if(name==="github"){
+            console.log(e.target.name);
+        }
+    }
 
     return(
     <div>
@@ -65,8 +99,8 @@ const Auth = ()=> {
             <br/><br/>
         </form>
         <div>
-            <button>Continue with Google.</button>
-            <button>Continue with Github.</button>
+            <button name="google" onClick={onSocialClick}>Continue with Google.</button>
+            <button name="github" onClick={onSocialClick}>Continue with Github.</button>
         </div>
 
     </div>
