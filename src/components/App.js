@@ -9,10 +9,12 @@ function App() {
   const [init,setInit] = useState(false); 
   //setInterval(()=>{console.log(firebaseAuth.currentUser,'현재 user');},2000);
   const [isLoggedIn, setIsLoggedIn] = useState(firebaseAuth.currentUser);
+  const [userObj, setUserObj] = useState(null);
   useEffect(()=>{
     firebaseAuth.onAuthStateChanged((user)=>{
       if(user){
         setIsLoggedIn(true);
+        setUserObj(user);
       }else{
         setIsLoggedIn(false);
       }
@@ -21,7 +23,7 @@ function App() {
   },[]);
   return (
     <>
-    {init?<AppRouter isLoggedIn={isLoggedIn}/>:"로그인중입니다.."}
+    {init?<AppRouter isLoggedIn={isLoggedIn} userObj={userObj}/>:"로그인중입니다.."}
     <footer>&copy; Jwitter {new Date().getFullYear()}</footer>
     </>
   );
